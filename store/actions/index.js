@@ -1,8 +1,3 @@
-import {
-  ADD_TODO,
-  DELETE_TODO,
-} from "./actions.types";
-
 
 import {
   LOGIN,
@@ -12,19 +7,7 @@ import {
 
 
 
-export const addTodo = text => {
-  return {
-    type: ADD_TODO,
-    text
-  };
-};
 
-export const deleteTodo = id => {
-  return {
-    type: DELETE_TODO,
-    id : id
-  };
-};
 
 export const login = user => {
   return{

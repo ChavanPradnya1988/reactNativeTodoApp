@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from "react-redux";
-import { addTodo, deleteTodo } from "../store/actions/index";
+import { addTodo, deleteTodo } from "../store/actions/todo";
 
 function TodoScreen (props){
   const [text, setText] = React.useState("");

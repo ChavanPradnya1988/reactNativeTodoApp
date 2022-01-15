@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View,Text,Button,TextInput,Keyboard } from 'react-native';
 import { useDispatch, useSelector } from "react-redux";
-import { addTodo, deleteTodo } from "../store/actions/index";
+import { addTodo, deleteTodo } from "../store/actions/todo";
 
 function TodoEditScreen (props){
 const param1 = props.route.params.taskItem;
