@@ -1,26 +1,20 @@
 import * as React from 'react';
-import { View,Text,Button,TextInput,Keyboard } from 'react-native';
+import { View,Text,Button,TextInput,Keyboard, TouchableOpacity, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from "react-redux";
-import { addTodo, deleteTodo } from "../store/actions/todo";
+import { addTodo, deleteTodo, updateToDo } from "../store/actions/todo";
+import { MaterialIcons } from '@expo/vector-icons'; 
 
 function TodoEditScreen (props){
 const param1 = props.route.params.taskItem;
-  const [text, setText] = React.useState(param1);
-  const [isEditing, setEdit] = React.useState(true);
-  const [taskItems, setTaskItems] = React.useState(param1);
-  const [isDelete, setDelete] = React.useState(true);
+  const [text, setText] = React.useState(param1.text);
+  const id = param1.id
+ 
   const dispatch = useDispatch();
-  
-//   const handleEdit = () => {
-//     setText("");
-//     setEdit(false);
-//   };
-  // console.log("param")
-  console.log(param1)
+
     
-    const handleSubmit = event => {
+    const handleSubmit = () => {
     if (text !== "") {
-      dispatch(addTodo(text));
+      dispatch(updateToDo(id,text));
       setText("");
       props.navigation.goBack();
     } else {
@@ -43,24 +37,26 @@ const param1 = props.route.params.taskItem;
     // }
     return(
         <View style={{ justifyContent:'center',alignItems:'center'}}>
-            <Text>
-                TodoEditScreen
-            </Text>
+           
             
-       <View>
-        {isEditing 
-          ? <TextInput value={text} onChange={event => setText(event.target.value)} />
-          : <Text>{param1}</Text>
-        }
-        <View>
-          {/* <Button title="Delete" onPress={() => {}} /> */}
-          {isDelete 
-            ? <Button title="Save" onPress={handleSubmit} />
-            : <Button title="Delete" onPress={handleDelete} />
-          }
+           
+  <View style={{flexDirection: "row"}}>
+    
+          <TextInput style={{margin: 10, backgroundColor: "#eee", color: '#000', padding:10, flex: 5}} value={text} onChangeText={text => setText(text)} />
+   
+    
+      
+        
+           <TouchableOpacity style={{flex: 1, justifyContent: "center"}} onPress={handleSubmit} >
+             <MaterialIcons name="save-alt" size={24} color="black" />
+           </TouchableOpacity>
+           
+            
+  </View>
+
+     
         </View>
-      </View>
-    </View>
+  
             
     )
 }

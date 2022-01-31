@@ -1,95 +1,112 @@
 import * as React from 'react';
-import { View,Text,StyleSheet,TouchableOpacity,Keyboard,TextInput } from 'react-native';
+import { View,Text,StyleSheet,TouchableOpacity,Keyboard,TextInput, Alert, Button, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from "react-redux";
-import { addTodo, deleteTodo } from "../store/actions/todo";
+import { addTodo, deleteTodo, fetchTodos } from "../store/actions/todo";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function TodoScreen (props){
   const [text, setText] = React.useState("");
-    const [task, setTask] = React.useState();
-    const [taskItems, setTaskItems] = React.useState([]);
-    // const [isDelete, setDelete] = React.useState(true);
-    const [todo,setTodos] = React.useState([])
-    const todos = useSelector((state) => state.todos.list);
-    // const handleAddTask = () => {
-    //   Keyboard.dismiss();
-    //   setTaskItems([...taskItems, task])
-    //   setTask(null);
-    // }
-   const dispatch = useDispatch();
-    const handleSubmit = event => {
+
+  const todos = useSelector((state) => state.Todos.list);
+   
+  const dispatch = useDispatch();
+
+  React.useEffect(()=>{
+    dispatch(fetchTodos());
+    // console.log("bla bla")
+  },[])
+
+
+
+
+  const handleSubmit = () => {
     if (text !== "") {
       dispatch(addTodo(text));
       setText("");
     } else {
-      // alert("cant not to empty text");
+       Alert.alert('Empty', 'Type your todo', [
+      { text: 'OK', onPress: () => console.log('OK Pressed') },
+    ]);
     }
-    // event.preventDefault();
   };
 
-  //   const completeTask = (index) => {
-  //   let itemsCopy = [...taskItems];
-  //   itemsCopy.splice(index, 1);
-  //   setTaskItems(itemsCopy)
-  // }
   const handleDelete = (id) => {
     dispatch(deleteTodo(id));
   };
 
-//  const onRemove = id => e => {
-//     setTodos(todos.filter(todo => todo.id !== id));
-//   };
-  // const handleDelete = (index) => {
-  //   const removedArr = [...todo].filter((todo) => todo.index !== index);
-  //   setTodos(removedArr);
-  //   console.log("removedArr",removedArr)
-  // }
 
     return(
         <View style={styles.container}>
-            <Text style={styles.heading}>
-                TodoScreen</Text>
-                {todos.map(todo => (
-                  <View style={styles.indexContainer}>
+          {/* <Button title='bla bla' onPress={() => console.log(todos)}/> */}
+      
+             <FlatList
+  
+            data={todos}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={(item) => item.id}
+            renderItem={(itemData) => (
+             
+            <View key={itemData.item.id} style={styles.indexContainer}>
                     <View style={styles.taskContainer}>
-                    <Text key={todo.id} style={styles.index}>{todo.text}</Text>
+                    <Text style={styles.index}>{itemData.item.text}</Text>
                     <TouchableOpacity
-                     onPress={()=>{props.navigation.navigate('Todo Edit',{taskItem:todo.text})}}
+                     onPress={()=>props.navigation.navigate('Todo Edit',{taskItem: itemData.item})}
                     >
-                    {console.log(taskItems)}
+            
                     <Feather name="edit" size={24} color="white" style={styles.delete} />
                     </TouchableOpacity>
                     <TouchableOpacity
-                       key={todo.id}
-                       onPress={()=>{handleDelete(todo.id)}}
+                       key={itemData.item.id}
+                       onPress={handleDelete.bind(this, itemData.item.id)}
                     >
                      <MaterialIcons name="delete" size={24} color="white" style={styles.delete} />                        
                    </TouchableOpacity> 
                    </View>
                  </View>
-              ))}
+            )}
+
+      />
+      
+                {/* {todos.map(todo => (
+                  <View key={todo.id} style={styles.indexContainer}>
+                    <View style={styles.taskContainer}>
+                    <Text style={styles.index}>{todo.text}</Text>
+                    <TouchableOpacity
+                     onPress={()=>props.navigation.navigate('Todo Edit',{taskItem:todo})}
+                    >
+            
+                    <Feather name="edit" size={24} color="white" style={styles.delete} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                       key={todo.id}
+                       onPress={handleDelete.bind(this, todo.id)}
+                    >
+                     <MaterialIcons name="delete" size={24} color="white" style={styles.delete} />                        
+                   </TouchableOpacity> 
+                   </View>
+                 </View>
+              ))} */}
             {/* </Text> */}
             <View style={styles.inputContainer}>
               <TextInput
             type="text"
-            placeholder="add a todo item"
+            placeholderTextColor={"white"}
+            placeholder="Add a todo "
             name="todo"
             value={text}
             style={styles.textInput}
-            onChange={event => setText(event.target.value)}
+            onChangeText={text => setText(text)}
           />
-
-              
+ 
               <TouchableOpacity
-                onPress={()=>{handleSubmit()}}
+                onPress={handleSubmit}
                >
                   <Ionicons name="add" size={24} color="white" />
               </TouchableOpacity>
               </View>
-              
-           {/* <Button title='TodoDetailsScreen' onPress={()=>props.navigation.navigate('todo Details')}/> */}
         </View>
     )
 }
@@ -106,7 +123,6 @@ const styles = StyleSheet.create(
           fontFamily:'montserrat'
          },
          inputContainer:{
-          borderColor: '#fff',
           backgroundColor: '#3E3364',
           borderWidth: 1,
           marginHorizontal: 20,
@@ -115,12 +131,12 @@ const styles = StyleSheet.create(
           alignItems: 'center',
           justifyContent: 'space-between',
           paddingHorizontal: 10,
-          position: 'absolute',
+          marginTop:20,
+          // position: 'absolute',
           bottom: 20,
          },
         textInput:{
         color: 'white',
-        //  backgroundColor: '#f4f4f4',
          margin: 4,
          height:50,
         },
@@ -128,12 +144,11 @@ const styles = StyleSheet.create(
         padding:10,
       },
       heading: {
-    
-       fontSize: 20,
-       fontWeight: '600',
-       marginTop: 30,
-       marginBottom: 10,
-      marginLeft: 20,
+        fontSize: 20,
+        fontWeight: '600',
+        marginTop: 30,
+        marginBottom: 10,
+        marginLeft: 20,
      },
      indexContainer: {
         backgroundColor: '#3E3364',
@@ -145,10 +160,9 @@ const styles = StyleSheet.create(
         height: 50,
     },
     index: {
-        color: '#fff',
-        fontSize: 20,
-        alignItems:screenLeft,
-        margin:10
+        color: 'white',
+        fontSize: 14
+        
     },
     taskContainer: {
         backgroundColor: '#3E3364',

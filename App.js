@@ -1,37 +1,26 @@
-import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStore } from 'redux';
+import React, { useState } from 'react';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-import RootReducer from './store/reducers';
-import TodoNavigation from './navigation/TodoNavigation';
-import AppNavigation from './navigation/AppNavigation';
-import Login from './screens/Login';
-import SignUp from './screens/SignUp';
-import { StyleSheet } from 'react-native';
+import { AppLoading } from 'expo';
+import ReduxThunk from 'redux-thunk';
+import todos from './store/reducers/todos';
+import auth from './store/reducers/auth';
 
-const store = createStore(RootReducer,window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+import NavigationContainer from './navigation/NavigationContainer';
+import { composeWithDevTools } from 'redux-devtools-extension';
 
-// function MyStack() {
-//   return (
-    
-//   );
-// }
+const rootReducer = combineReducers({
+  Todos: todos,
+  auth: auth
+});
+
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(ReduxThunk)));
+
 
 export default function App() {
   return (
-     <Provider store={store}>
-    <NavigationContainer>
-        <TodoNavigation style={styles.todoContainer}/>
-        {/* <AppNavigation /> */}
-        {/* <SignUp /> */}
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer />
     </Provider>
-       
   );
 }
-
-const styles = StyleSheet.create({
-  todoContainer: {
-    fontFamily:'Roboto',//Default font family
-  }
-});

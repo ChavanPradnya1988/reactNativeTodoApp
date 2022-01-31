@@ -3,7 +3,7 @@ import { View,Text,Button } from 'react-native';
 
 function TodoDetailsScreen (props){
 const {param1} = props.route.params;
-console.log(param1)
+
     return(
         <View style={{ justifyContent:'center',alignItems:'center'}}>
             <Text>
