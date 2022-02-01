@@ -5,7 +5,8 @@ import { addTodo, deleteTodo, updateToDo } from "../store/actions/todo";
 import { MaterialIcons } from '@expo/vector-icons'; 
 
 function TodoEditScreen (props){
-const param1 = props.route.params.taskItem;
+  const param1 = props.route.params.taskItem;
+  console.log(param1)
   const [text, setText] = React.useState(param1.text);
   const id = param1.id
  
@@ -18,9 +19,8 @@ const param1 = props.route.params.taskItem;
       setText("");
       props.navigation.goBack();
     } else {
-      // alert("cant not to empty text");
+      alert("cant not to empty text");
     }
-    // event.preventDefault();
   };
 
     // const handleEdit = () => {

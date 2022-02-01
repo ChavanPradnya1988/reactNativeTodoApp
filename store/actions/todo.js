@@ -5,11 +5,13 @@ import {
   FETCH_TODOS
 } from "./actions.types";
 
-export const fetchTodos = () => async dispatch => {
- const response = await fetch ("https://todo-rn-4c31a-default-rtdb.firebaseio.com/todo.json");
-//  console.log(response)
+export const fetchTodos = () => async (dispatch,getState) => {
+  const uid = getState().auth.userId;
+ const response = await fetch (`https://todo-rn-4c31a-default-rtdb.firebaseio.com/todo/${uid}.json`);
+ 
+// console.log(uid)
  const resData = await response.json()
-//  console.log(resData)
+// console.log(resData)
  let data = [];
  for (const key in resData){
      data.push({
@@ -24,21 +26,25 @@ export const fetchTodos = () => async dispatch => {
             data:data
         }
     )
+
 }
-export const addTodo = text => async dispatch => {
-  const response = await fetch ("https://todo-rn-4c31a-default-rtdb.firebaseio.com/todo.json",
+export const addTodo = text => async (dispatch, getState) => {
+
+  const uid = getState().auth.userId;
+  const response = await fetch (`https://todo-rn-4c31a-default-rtdb.firebaseio.com/todo/${uid}.json`,
   {
       method:"POST",
       headers:{
           "Content-Type":"application/json"
       },
       body:JSON.stringify({
-          text
+          text: text
       })
     }
    
   );
-  const resData = await response.json()
+  const resData = await response.json();
+  console.log(resData, uid);
   dispatch ({
     type: ADD_TODO,
     text: text,
@@ -46,8 +52,10 @@ export const addTodo = text => async dispatch => {
   }) 
 };
 
-export const deleteTodo = id => async dispatch => {
-    const response = await fetch (`https://console.firebase.google.com/project/todo-rn-4c31a/authentication/users.json`,
+export const deleteTodo = id => async (dispatch,getState) => {
+    const uid = getState().auth.userId;
+    
+    const response = await fetch (`https://todo-rn-4c31a-default-rtdb.firebaseio.com/todo/${uid}/${id}.json`,
     {
       method:"DELETE",
       headers:{
@@ -56,17 +64,17 @@ export const deleteTodo = id => async dispatch => {
       
     }
    );
-   
-//   const respince = await fetch ("")
+
   dispatch ({
     type: DELETE_TODO,
     id : id
   })
 };
 
-export const updateToDo = (id,text) => async dispatch => {
-    const response = await fetch (`https://todo-rn-4c31a-default-rtdb.firebaseio.com/todo/${id}.json`,
-  {
+export const updateToDo = (id,text) => async (dispatch,getState) => {
+   const uid = getState().auth.userId;
+    const response = await fetch (`https://todo-rn-4c31a-default-rtdb.firebaseio.com/todo/${uid}/${id}.json`,
+    {
       method:"PATCH",
       headers:{
           "Content-Type":"application/json"

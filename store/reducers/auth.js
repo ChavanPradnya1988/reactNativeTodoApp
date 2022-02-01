@@ -1,17 +1,30 @@
-import { AUTHENTICATE } from '../actions/Auth';
+import { AUTHENTICATE, LOGOUT, SET_DID_TRY_AL } from '../actions/Auth';
 
 const initialState = {
-  userId: null
+  userId: null,
+  toen:null,
+  didTryAutoLogin : false
 };
 
 const auth = (state = initialState, action) => {
   switch (action.type) {
-    case AUTHENTICATE:
+   case AUTHENTICATE:
       return {
-        userId: action.userId
+        ...state,
+        token: action.token,
+        userId: action.userId,
+        didTryAutoLogin : true
       };
-    // case LOGOUT:
-    //   return initialState;
+    case SET_DID_TRY_AL:
+      return {
+            ...state,
+            didTryAutoLogin: true
+          };
+    case LOGOUT:
+      return {
+        ...initialState,
+        didTryAutoLogin: true
+      }
     // case SIGNUP:
     //   return {
     //     token: action.token,

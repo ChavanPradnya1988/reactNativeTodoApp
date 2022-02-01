@@ -1,22 +1,29 @@
 
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 // export const SIGNUP = 'SIGNUP';
 // export const LOGIN = 'LOGIN';
 export const AUTHENTICATE = 'AUTHENTICATE';
 export const LOGOUT = 'LOGOUT';
+export const SET_DID_TRY_AL = 'SET_DID_TRY_AL';
 
 let timer;
 
-export const authenticate = (userId) => {
+export const didTryAutoLogin = () => {
+  return {type : SET_DID_TRY_AL }
+};
+
+export const authenticate = (userId, token, expiryTime) => {
+ console.log(userId,  "bla nbla", token, expiryTime, "Stuff")
   return dispatch => {
-    dispatch({ type: AUTHENTICATE, userId: userId });
+     dispatch(setLogoutTimer(expiryTime));
+    dispatch({ type: AUTHENTICATE, userId: userId , token: token});
   };
 };
 
 export const signup = (email, password) => {
   return async dispatch => {
     const response = await fetch(
-       'https://todo-rn-4c31a-default-rtdb.firebaseio.com/authentication/users.json',
+       'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAN8pbO06PBkK-O4H9MJwMNne8ZghUoKn4',
 
   {
         method: 'POST',
@@ -42,27 +49,25 @@ export const signup = (email, password) => {
     }
 
     const resData = await response.json();
-    console.log(resData);
+   
     dispatch(
       authenticate(
-        resData.name,
-        console.log(resData.name),
-        // resData.idToken,
-        // console.log(resData.idToken),
-        // parseInt(resData.expiresIn) * 1000
+        resData.localId,
+        resData.idToken,
+        parseInt(resData.expiresIn) * 1000
       )
     );
     const expirationDate = new Date(
       new Date().getTime() + parseInt(resData.expiresIn) * 1000
     );
-    saveDataToStorage( resData.userIdId );
+    saveDataToStorage( resData.localId, resData.idToken, expirationDate );
   };
 };
 
 export const login = (email, password) => {
   return async dispatch => {
     const response = await fetch(
-      'https://todo-rn-4c31a-default-rtdb.firebaseio.com/authentication/users.json',
+      'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAN8pbO06PBkK-O4H9MJwMNne8ZghUoKn4',
       {
         method: 'POST',
         headers: {
@@ -89,26 +94,26 @@ export const login = (email, password) => {
     }
 
     const resData = await response.json();
-    console.log(resData);
+    console.log(resData, "sgsggggfsg");
     dispatch(
       authenticate(
-        resData.userId,
-        // resData.idToken,
-        // parseInt(resData.expiresIn) * 1000
+        resData.localId,
+        resData.idToken,
+        parseInt(resData.expiresIn) * 1000
       )
     );
     const expirationDate = new Date(
       new Date().getTime() + parseInt(resData.expiresIn) * 1000
     );
-    saveDataToStorage(resData.userId);
+    saveDataToStorage(resData.localId,resData.idToken,expirationDate);
   };
 };
 
-// export const logout = () => {
-//   clearLogoutTimer();
-//   removeItem('userData');
-//   return { type: LOGOUT };
-// };
+export const logout = () => {
+  clearLogoutTimer();
+  AsyncStorage.removeItem('userData');
+  return { type: LOGOUT };
+};
 
 const clearLogoutTimer = () => {
   if (timer) {
@@ -116,19 +121,22 @@ const clearLogoutTimer = () => {
   }
 };
 
-// const setLogoutTimer = expirationTime => {
-//   return dispatch => {
-//     timer = setTimeout(() => {
-//       dispatch(logout());
-//     }, expirationTime);
-//   };
-// };
+const setLogoutTimer = expirationTime => {
+  return dispatch => {
+    timer = setTimeout(() => {
+      dispatch(logout());
+    }, expirationTime);
+  };
+};
 
-const saveDataToStorage = (userId) => {
-AsyncStorage.setItem(
+const saveDataToStorage = (userId, token, expirationDate) => {
+  AsyncStorage.setItem(
     'userData',
     JSON.stringify({
+      token: token,
       userId: userId,
+      expiryDate: expirationDate.toISOString()
     })
   );
 };
+

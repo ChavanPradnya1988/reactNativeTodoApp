@@ -8,8 +8,7 @@ import {
 } from "../actions/actions.types";
 
 const initalState = {
-  list: [],
-  user: []
+  data: []
 };
 
 const todos = (state = initalState, action) => {
@@ -17,30 +16,30 @@ const todos = (state = initalState, action) => {
     case FETCH_TODOS:
       return{
           ...state,
-          list:action.data
+          data:action.data
       };
     
     case ADD_TODO:
       // let len = state.list.length;
       return {
-        list: [
-          ...state.list,
+
+        data: [
+          ...state.data,
           { id: action.id, text: action.text }
         ]
       };
     case DELETE_TODO:
       return {
-        ...state,
-        list: state.list.filter(item => item.id !== action.id)
+        data:state.data.filter(item => item.id !== action.id)
       };
 
     case UPDATE_TODO : 
-      const index = state.list.findIndex(element => element.id === action.id)
-      const updatedArray= [...state.list]
+      const index = state.data.findIndex(element => element.id === action.id)
+      const updatedArray= [...state.data]
       updatedArray[index].text=action.text
       return {
         ...state,
-       list:updatedArray
+       data:updatedArray
       };
 
     case ADD_USER :

@@ -6,7 +6,7 @@ import ReduxThunk from 'redux-thunk';
 import todos from './store/reducers/todos';
 import auth from './store/reducers/auth';
 
-import NavigationContainer from './navigation/NavigationContainer';
+import AppNavigator from './navigation/AppNavigator';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
 const rootReducer = combineReducers({
@@ -20,7 +20,7 @@ const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(Redux
 export default function App() {
   return (
     <Provider store={store}>
-      <NavigationContainer />
+      <AppNavigator />
     </Provider>
   );
 }

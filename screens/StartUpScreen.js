@@ -6,40 +6,44 @@ import {
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import * as authActions from '../store/actions/Auth';
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-const StartupScreen = props => {
+const StartupScreen = (props) => {
   const dispatch = useDispatch();
-  const [isSignup, setIsSignup] = useState(true);
 
  useEffect(() => {
     const tryLogin = async () => {
       const userData = await AsyncStorage.getItem('userData');
       if (!userData) {
-        props.navigation.navigate('Auth');
+        dispatch(authActions.didTryAutoLogin());
+        // props.navigation.navigate('Auth');
         return;
       }
       const transformedData = JSON.parse(userData);
-      const { userId } = transformedData;
-    //   const expirationDate = new Date(expiryDate);
+      console.log("Transport Data", transformedData)
+      const { token, userId, expiryDate } = transformedData;
+       const expirationDate = new Date(expiryDate);
 
-    //   if (expirationDate <= new Date() || !token || !userId) {
-    //     props.navigation.navigate('Auth');
-    //     return;
-    //   }
+       if (expirationDate <= new Date() || !token || !userId) {
+         dispatch(authActions.didTryAutoLogin());
+         return;
+       }
 
-      // const expirationTime = expirationDate.getTime() - new Date().getTime();
+       const expirationTime = expirationDate.getTime() - new Date().getTime();
 
-      props.navigation.navigate('Todo');
-      dispatch(authActions.authenticate(userId));
+    
+       dispatch(authActions.authenticate(userId, token, expirationTime));
+    
     };
 
     tryLogin();
+    
   }, [dispatch]);
 
   return (
     <View style={styles.screen}>
       <ActivityIndicator size="large" />
+      
     </View>
   );
 };

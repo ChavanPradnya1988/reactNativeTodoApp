@@ -5,12 +5,13 @@ import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from "react-redux";
 import { addTodo, deleteTodo, fetchTodos } from "../store/actions/todo";
+import { logout } from '../store/actions/Auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 function TodoScreen (props){
   const [text, setText] = React.useState("");
 
-  const todos = useSelector((state) => state.Todos.list);
+  const todos = useSelector(state => state.Todos.data);
    
   const dispatch = useDispatch();
 
@@ -69,27 +70,6 @@ function TodoScreen (props){
             )}
 
       />
-      
-                {/* {todos.map(todo => (
-                  <View key={todo.id} style={styles.indexContainer}>
-                    <View style={styles.taskContainer}>
-                    <Text style={styles.index}>{todo.text}</Text>
-                    <TouchableOpacity
-                     onPress={()=>props.navigation.navigate('Todo Edit',{taskItem:todo})}
-                    >
-            
-                    <Feather name="edit" size={24} color="white" style={styles.delete} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                       key={todo.id}
-                       onPress={handleDelete.bind(this, todo.id)}
-                    >
-                     <MaterialIcons name="delete" size={24} color="white" style={styles.delete} />                        
-                   </TouchableOpacity> 
-                   </View>
-                 </View>
-              ))} */}
-            {/* </Text> */}
             <View style={styles.inputContainer}>
               <TextInput
             type="text"

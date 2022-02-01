@@ -1,54 +1,66 @@
-import React from 'react';
-import {
-  createSwitchNavigator,
-  createAppContainer,
-} from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack'
-import { Platform, SafeAreaView, Button, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import * as React from 'react';
+import { Text } from 'react-native';
 import { useDispatch } from 'react-redux';
-
 import TodoScreen from '../screens/TodoScreen';
 import TodoEditScreen from '../screens/TodoEditScreen';
+import TodoDetailsScreen from '../screens/TodoDetailsScreen';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthScreen from '../screens/AuthScreen';
-import StartupScreen from '../screens/StartUpScreen';
-import * as authActions from '../store/actions/Auth';
+import { logout } from '../store/actions/Auth';
 
 
-const TodoNavigator = createStackNavigator(
-  {
-    Todos: TodoScreen,
-    TodoEdit: TodoEditScreen,
-
-  },
-  {
-    navigationOptions: {
-      drawerIcon: drawerConfig => (
-        <Ionicons
-          size={23}
-        />
-      )
-    },
-  }
-);
+const TodoNavigator = createNativeStackNavigator();
 
 
-
-
-const AuthNavigator = createStackNavigator(
-  {
-    Auth: AuthScreen
-  },
+export const TodoNavigation = () => {
   
-);
+const dispatch = useDispatch();
 
-const MainNavigator = createSwitchNavigator({
-    Startup: StartupScreen,
-    Auth: AuthNavigator,
-    Todos: TodoNavigator
-});
+    return(
 
-export default createAppContainer(MainNavigator);
+
+      <TodoNavigator.Navigator>
+          <TodoNavigator.Screen
+          name="Todo"
+          component={ TodoScreen }
+          options={() => ({
+    
+    headerRight: () => (
+      <Text onPress={() => dispatch(logout())}>Log out</Text>
+     
+    ),
+  })}
+          />
+        
+          <TodoNavigator.Screen
+          name="todo Details"
+          component={ TodoDetailsScreen }/>              
+        
+          <TodoNavigator.Screen
+          name="Todo Edit" 
+          component={ TodoEditScreen}
+          />
+                  
+
+      </TodoNavigator.Navigator>
+
+    )
+}
+
+
+
+const AuthNavigator = createNativeStackNavigator();
+
+export const AuthNavigation = () => {
+  return(
+   <AuthNavigator.Navigator initialRouteName='Login'>
+
+            <AuthNavigator.Screen name="Auth" component={AuthScreen} />
+        </AuthNavigator.Navigator>
+  )
+}
+
+
 
 
 

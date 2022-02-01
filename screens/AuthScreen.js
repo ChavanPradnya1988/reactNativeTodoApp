@@ -81,7 +81,6 @@ const AuthScreen = props => {
     setIsLoading(true);
     try {
       await dispatch(action);
-      props.navigation.navigate('Todos');
     } catch (err) {
       setError(err.message);
       setIsLoading(false);
@@ -102,8 +101,6 @@ const AuthScreen = props => {
 
   return (
     <KeyboardAvoidingView
-      behavior="padding"
-      keyboardVerticalOffset={50}
       style={styles.screen}
     >
       
